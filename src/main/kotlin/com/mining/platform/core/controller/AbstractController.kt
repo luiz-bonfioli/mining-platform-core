@@ -23,7 +23,7 @@ abstract class AbstractController<E : EntityBase, VO : ValueObject<E>, S : DataS
     private lateinit var request: HttpServletRequest
 
     @Autowired
-    private lateinit var service: S;
+    private lateinit var service: S
 
     @PostMapping
     fun save(@RequestBody valueObject: VO): ResponseEntity<VO> {

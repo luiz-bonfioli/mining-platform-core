@@ -37,7 +37,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @return
      */
     @Transactional
-    fun saveOrUpdate(entity: E): E {
+    open fun saveOrUpdate(entity: E): E {
         return if (entity.id == null) save(entity) else update(entity)
     }
 
@@ -46,40 +46,12 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @return
      */
     @Transactional
-    fun saveOrUpdate(entities: Collection<E>): List<E> {
+    open fun saveOrUpdate(entities: Collection<E>): List<E> {
         val entityList: MutableList<E> = ArrayList()
         for (entity in entities) {
             entityList.add(if (entity.id == null) save(entity) else update(entity))
         }
         return entityList
-    }
-
-    /**
-     * Save and flush audit an entity
-     *
-     * @param entity
-     * @return
-     */
-    @Transactional
-    fun saveAndFlush(entity: E): E {
-        beforeSave(entity)
-        val saved = repository.saveAndFlush(entity)
-        afterSave(saved)
-        return saved
-    }
-
-    /**
-     * Save and flush audit an entity
-     *
-     * @param entity
-     * @return
-     */
-    @Transactional
-    fun updateAndFlush(entity: E): E {
-        beforeUpdate(entity)
-        val saved = repository.saveAndFlush(entity)
-        afterUpdate(saved)
-        return saved
     }
 
     /**
@@ -89,7 +61,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @return
      */
     @Transactional
-    fun save(entity: E): E {
+    open fun save(entity: E): E {
         beforeSave(entity)
         val saved = repository.save(entity)
         afterSave(saved)
@@ -103,7 +75,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @return
      */
     @Transactional
-    fun update(entity: E): E {
+    open fun update(entity: E): E {
         beforeUpdate(entity)
         val updated = repository.save(entity)
         afterUpdate(updated)
@@ -117,7 +89,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @return
      */
     @Transactional
-    fun saveAll(entities: Collection<E>): Collection<E> {
+    open fun saveAll(entities: Collection<E>): Collection<E> {
         beforeSave(entities)
         val entityList: MutableList<E> = ArrayList()
         for (entity in entities) {
@@ -135,7 +107,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @return
      */
     @Transactional
-    fun updateAll(entities: Collection<E>): List<E> {
+    open fun updateAll(entities: Collection<E>): List<E> {
         beforeUpdate(entities)
         val entityList: MutableList<E> = ArrayList()
         for (entity in entities) {
@@ -152,7 +124,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @param id
      * @return
      */
-    fun find(id: UUID): E? {
+    open fun find(id: UUID): E? {
         val entity = repository.findById(id)
         return if (entity.isPresent) entity.get() else null
     }
@@ -163,7 +135,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @param id
      * @return
      */
-    fun getOne(id: UUID): E {
+    open fun getOne(id: UUID): E {
         return repository.getOne(id)
     }
 
@@ -173,7 +145,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @param id
      * @return
      */
-    fun existsById(id: UUID): Boolean {
+    open fun existsById(id: UUID): Boolean {
         return repository.existsById(id)
     }
 
@@ -182,7 +154,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      *
      * @return
      */
-    fun findAll(): List<E> {
+    open fun findAll(): List<E> {
         return repository.findAll()
     }
 
@@ -192,7 +164,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @param pageable
      * @return
      */
-    fun findAll(pageable: Pageable): Page<E> {
+    open fun findAll(pageable: Pageable): Page<E> {
         return repository.findAll(pageable)
     }
 
@@ -204,7 +176,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @param filterParams
      * @return
      */
-    fun findAll(pageable: PageRequest, search: String?, filterParams: Map<String, String>): Page<E> {
+    open fun findAll(pageable: PageRequest, search: String?, filterParams: Map<String, String>): Page<E> {
         throw MethodSearchNotImplementedException("This method should be implemented with custom query in the repository interface.")
     }
 
@@ -215,7 +187,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @param id
      */
     @Transactional
-    fun deleteById(id: UUID?) {
+    open fun deleteById(id: UUID?) {
         beforeDelete(id)
         repository.updateEntityStatusById(id, EntityStatus.DELETED)
         afterDelete(id)
@@ -225,7 +197,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      *
      */
     @Transactional
-    fun deleteAll() {
+    open fun deleteAll() {
         deleteAll(repository.findAll())
     }
 
@@ -235,7 +207,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @param entities
      */
     @Transactional
-    fun deleteAll(entities: Collection<E>) {
+    open fun deleteAll(entities: Collection<E>) {
         for (entity in entities) {
             deleteById(entity.id)
         }
@@ -246,7 +218,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      *
      * @return
      */
-    fun count(): Long {
+    open fun count(): Long {
         return repository.count()
     }
 
@@ -277,60 +249,60 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
     /**
      *
      */
-    protected fun beforeSave(entity: E) {
+    open fun beforeSave(entity: E) {
         setEntityStatus(entity, EntityStatus.CREATED)
     }
 
     /**
      *
      */
-    protected fun beforeUpdate(entity: E) {
+    open fun beforeUpdate(entity: E) {
         setEntityStatus(entity, EntityStatus.UPDATED)
     }
 
     /**
      *
      */
-    protected fun beforeDelete(id: UUID?) {}
+    open fun beforeDelete(id: UUID?) {}
 
     /**
      *
      */
-    protected fun beforeSave(entities: Collection<E>) {
+    open fun beforeSave(entities: Collection<E>) {
         setEntityStatus(entities, EntityStatus.CREATED)
     }
 
     /**
      *
      */
-    protected fun beforeUpdate(entities: Collection<E>) {
+    open fun beforeUpdate(entities: Collection<E>) {
         setEntityStatus(entities, EntityStatus.UPDATED)
     }
 
     /**
      *
      */
-    protected fun afterSave(entity: E) {}
+    open fun afterSave(entity: E) {}
 
     /**
      *
      */
-    protected fun afterUpdate(entity: E) {}
+    open fun afterUpdate(entity: E) {}
 
     /**
      *
      */
-    protected fun afterDelete(id: UUID?) {}
+    open fun afterDelete(id: UUID?) {}
 
     /**
      *
      */
-    protected fun afterSave(entities: Collection<E>) {}
+    open fun afterSave(entities: Collection<E>) {}
 
     /**
      *
      */
-    protected fun afterUpdate(entities: Collection<E>) {}
+    open fun afterUpdate(entities: Collection<E>) {}
 
     companion object {
         /**
