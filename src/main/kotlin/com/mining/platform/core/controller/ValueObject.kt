@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.mining.platform.core.datasource.EntityBase
 import java.io.Serializable
-import java.util.logging.Logger
 
 /**
  *

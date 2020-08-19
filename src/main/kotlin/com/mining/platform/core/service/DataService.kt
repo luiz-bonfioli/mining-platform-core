@@ -57,6 +57,12 @@ interface DataService<E : EntityBase> {
 
     /**
      * @param pageable
+     * @return
+     */
+    fun findByParams(pageable: Pageable, search: Map<String, String>): Page<E>
+
+    /**
+     * @param pageable
      * @param search
      * @param requestParams
      * @return

@@ -3,8 +3,12 @@ package com.mining.platform.core.controller
 import com.mining.platform.core.datasource.EntityBase
 import com.mining.platform.core.service.DataService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import java.util.logging.Logger
@@ -16,14 +20,18 @@ import kotlin.reflect.KClass
  *
  * @author luiz.bonfioli
  */
-@CrossOrigin(origins = ["*"])
+@CrossOrigin(origins = ["*"], exposedHeaders = ["X-Total-Elements", "X-Total-Pages"])
 abstract class AbstractController<E : EntityBase, VO : ValueObject<E>, S : DataService<E>> {
+
+    companion object {
+        protected val logger: Logger = Logger.getLogger(AbstractController::class.qualifiedName)
+    }
 
     @Autowired
     private lateinit var request: HttpServletRequest
 
     @Autowired
-    private lateinit var service: S
+    protected lateinit var service: S
 
     @PostMapping
     fun save(@RequestBody valueObject: VO): ResponseEntity<VO> {
@@ -63,35 +71,25 @@ abstract class AbstractController<E : EntityBase, VO : ValueObject<E>, S : DataS
         return ServerResponse.success(ValueObjectConverter.convert(entity, valueObjectClass))
     }
 
-//    @GetMapping("/")
-//    fun findAll(@RequestParam("page") page: Int, @RequestParam("size") size: Int, @RequestParam(value = "sort", required = false) sortProperties: Array<String?>?, @RequestParam(value = "direction", required = false) sortDirection: Sort.Direction?): ResponseEntity<List<VO?>?>? {
-//        val pageRequest = if (sortProperties != null) PageRequest.of(page, size, Sort.by(sortDirection, *sortProperties)) else PageRequest.of(page, size)
-//        val pageSlice = service.findAll(pageRequest)
-//        val entityList = pageSlice.content
-//        val valueObjectList = ValueObjectConverter.convert(entityList, valueObjectClass)
-//        val headers: MultiValueMap<String, String> = LinkedMultiValueMap()
-//        headers.add("X-Total-Elements", pageSlice.totalElements.toString())
-//        headers.add("X-Total-Pages", pageSlice.totalPages.toString())
-//        return ServerResponse.success(valueObjectList, headers)
-//    }
+    @GetMapping("/find-by-params")
+    fun findByParams(@RequestParam("page") page: Int,
+                     @RequestParam("size") size: Int,
+                     @RequestParam("sort") sort: Array<String>?,
+                     @RequestParam("direction") direction: Sort.Direction = Sort.Direction.ASC,
+                     @RequestParam("search") search: Array<String>?): ResponseEntity<Collection<VO>> {
+        val pageRequest = sort?.let { PageRequest.of(page, size, Sort.by(direction, *sort)) }
+                ?: run { PageRequest.of(page, size) }
 
-//    @GetMapping("/search")
-//    fun findAllParams(@RequestParam requestParams: MutableMap<String?, String?>, @RequestParam(value = "sort", required = false) sortProperties: Array<String?>?, @RequestParam(value = "direction", required = false) sortDirection: Sort.Direction?): ResponseEntity<List<VO?>?>? {
-//        val page = requestParams["page"].toInt()
-//        requestParams.remove("page")
-//        val size = requestParams["size"].toInt()
-//        requestParams.remove("size")
-//        val search = requestParams["search"]
-//        requestParams.remove("search")
-//        val pageRequest = if (sortProperties != null) PageRequest.of(page, size, Sort.by(sortDirection, *sortProperties)) else PageRequest.of(page, size)
-//        val pageSlice = service.findAll(pageRequest, search, requestParams)
-//        val entityList = pageSlice.content
-//        val valueObjectList = ValueObjectConverter.convert(entityList, valueObjectClass)
-//        val headers: MultiValueMap<String, String> = LinkedMultiValueMap()
-//        headers.add("X-Total-Elements", pageSlice.totalElements.toString())
-//        headers.add("X-Total-Pages", pageSlice.totalPages.toString())
-//        return ServerResponse.success(valueObjectList, headers)
-//    }
+        val pageSlice = service.findByParams(pageRequest, HashMap())
+        val entityList = pageSlice.content
+        val valueObjectList = ValueObjectConverter.convert(entityList, valueObjectClass)
+
+        val headers: MultiValueMap<String, String> = LinkedMultiValueMap()
+        headers.add("X-Total-Elements", pageSlice.totalElements.toString())
+        headers.add("X-Total-Pages", pageSlice.totalPages.toString())
+
+        return ServerResponse.success(valueObjectList, headers)
+    }
 
     @GetMapping("/all")
     fun findAll(): ResponseEntity<Collection<VO>> {
@@ -101,12 +99,4 @@ abstract class AbstractController<E : EntityBase, VO : ValueObject<E>, S : DataS
     }
 
     protected abstract val valueObjectClass: KClass<VO>
-
-    companion object {
-        /**
-         * The logger instance for this class
-         */
-        protected val logger = Logger.getLogger(AbstractController::class.java.name)
-    }
-
 }

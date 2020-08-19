@@ -40,7 +40,7 @@ object ServerResponse {
      * @param headers
      * @return
      */
-    fun <R> success(response: R, headers: MultiValueMap<String?, String?>?): ResponseEntity<R> {
+    fun <R> success(response: R, headers: MultiValueMap<String, String>): ResponseEntity<R> {
         return ResponseEntity(response, headers, HttpStatus.OK)
     }
 

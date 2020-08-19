@@ -28,7 +28,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * Injection of repository instance
      */
     @Autowired
-    private lateinit var repository: R
+    protected lateinit var repository: R
 
     /**
      * Save or update entity.
@@ -37,9 +37,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @return
      */
     @Transactional
-    open fun saveOrUpdate(entity: E): E {
-        return if (entity.id == null) save(entity) else update(entity)
-    }
+    open fun saveOrUpdate(entity: E): E = if (entity.id == null) save(entity) else update(entity)
 
     /**
      * @param entities
@@ -130,33 +128,19 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
     }
 
     /**
-     * Get the entity reference by its id
-     *
-     * @param id
-     * @return
-     */
-    open fun getOne(id: UUID): E {
-        return repository.getOne(id)
-    }
-
-    /**
      * Check if the entity exists by its id
      *
      * @param id
      * @return
      */
-    open fun existsById(id: UUID): Boolean {
-        return repository.existsById(id)
-    }
+    open fun existsById(id: UUID): Boolean = repository.existsById(id)
 
     /**
      * Find all entities
      *
      * @return
      */
-    open fun findAll(): List<E> {
-        return repository.findAll()
-    }
+    open fun findAll(): Collection<E> = repository.findAll()
 
     /**
      * Find all entities with pagination
@@ -164,22 +148,17 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @param pageable
      * @return
      */
-    open fun findAll(pageable: Pageable): Page<E> {
-        return repository.findAll(pageable)
-    }
+    fun findAll(pageable: Pageable): Page<E> = repository.findAll(pageable)
 
     /**
      * Find all entities with criteria
      *
      * @param pageable
-     * @param search
      * @param filterParams
      * @return
      */
-    open fun findAll(pageable: PageRequest, search: String?, filterParams: Map<String, String>): Page<E> {
+    open fun findByParams(pageable: Pageable, search: Map<String, String>): Page<E> =
         throw MethodSearchNotImplementedException("This method should be implemented with custom query in the repository interface.")
-    }
-
 
     /**
      * Delete an entity by its id. This is a soft delete.
