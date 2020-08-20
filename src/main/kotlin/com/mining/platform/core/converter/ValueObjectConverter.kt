@@ -1,5 +1,6 @@
-package com.mining.platform.core.controller
+package com.mining.platform.core.converter
 
+import com.mining.platform.core.controller.ValueObject
 import com.mining.platform.core.datasource.EntityBase
 import java.util.*
 import java.util.logging.Level

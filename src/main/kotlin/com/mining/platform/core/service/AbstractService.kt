@@ -148,7 +148,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @param pageable
      * @return
      */
-    fun findAll(pageable: Pageable): Page<E> = repository.findAll(pageable)
+    open fun findAll(pageable: Pageable): Page<E> = repository.findAll(pageable)
 
     /**
      * Find all entities with criteria

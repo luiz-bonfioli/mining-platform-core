@@ -1,5 +1,7 @@
 package com.mining.platform.core.controller
 
+import com.mining.platform.core.converter.EntityConverter
+import com.mining.platform.core.converter.ValueObjectConverter
 import com.mining.platform.core.datasource.EntityBase
 import com.mining.platform.core.service.DataService
 import org.springframework.beans.factory.annotation.Autowired
