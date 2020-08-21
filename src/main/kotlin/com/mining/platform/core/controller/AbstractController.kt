@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 import java.util.logging.Logger
 import javax.servlet.http.HttpServletRequest
+import kotlin.collections.HashMap
 import kotlin.reflect.KClass
 
 /**
@@ -82,7 +83,7 @@ abstract class AbstractController<E : EntityBase, VO : ValueObject<E>, S : DataS
         val pageRequest = sort?.let { PageRequest.of(page, size, Sort.by(direction, *sort)) }
                 ?: run { PageRequest.of(page, size) }
 
-        val pageSlice = service.findByParams(pageRequest, HashMap())
+        val pageSlice = service.findByParams(pageRequest, createSearchMap(search))
         val entityList = pageSlice.content
         val valueObjectList = ValueObjectConverter.convert(entityList, valueObjectClass)
 
@@ -91,6 +92,15 @@ abstract class AbstractController<E : EntityBase, VO : ValueObject<E>, S : DataS
         headers.add("X-Total-Pages", pageSlice.totalPages.toString())
 
         return ServerResponse.success(valueObjectList, headers)
+    }
+
+    private fun createSearchMap(search: Array<String>?): Map<String, String> {
+        val searchMap = HashMap<String, String>()
+        search?.forEach {
+            val parameter = it.split(":")
+            searchMap[parameter[0]] = parameter[1]
+        }
+        return searchMap
     }
 
     @GetMapping("/all")
