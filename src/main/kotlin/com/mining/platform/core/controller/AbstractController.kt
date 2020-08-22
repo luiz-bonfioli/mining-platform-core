@@ -37,42 +37,42 @@ abstract class AbstractController<E : EntityBase, VO : ValueObject<E>, S : DataS
     protected lateinit var service: S
 
     @PostMapping
-    fun save(@RequestBody valueObject: VO): ResponseEntity<VO> {
-        val entity = valueObject.entity
-        val saved = service.save(entity)
-        return ServerResponse.success(ValueObjectConverter.convert(saved, valueObjectClass))
-    }
+    fun save(@RequestBody valueObject: VO): ResponseEntity<VO> =
+            ServerResponse.success(ValueObjectConverter.convert(service.save(valueObject.entity), valueObjectClass))
 
     @PostMapping("save-all")
-    fun saveAll(@RequestBody valueObjectList: Collection<VO>): ResponseEntity<Collection<VO>> {
-        val entityList = service.saveAll(EntityConverter.convert(valueObjectList))
-        return ServerResponse.success(ValueObjectConverter.convert(entityList, valueObjectClass))
-    }
+    fun saveAll(@RequestBody valueObjectList: Collection<VO>): ResponseEntity<Collection<VO>> =
+            service.saveAll(EntityConverter.convert(valueObjectList)).let {
+                ServerResponse.success(ValueObjectConverter.convert(it, valueObjectClass))
+            }
 
     @PutMapping
-    fun update(@RequestBody valueObject: VO): ResponseEntity<VO> {
-        val entity = valueObject.entity
-        val updated = service.update(entity)
-        return ServerResponse.success(ValueObjectConverter.convert(updated, valueObjectClass))
-    }
+    fun update(@RequestBody valueObject: VO): ResponseEntity<VO> =
+            ServerResponse.success(ValueObjectConverter.convert(service.update(valueObject.entity), valueObjectClass))
 
     @PutMapping("update-all")
-    fun updateAll(@RequestBody valueObjectList: Collection<VO>?): ResponseEntity<Collection<VO>> {
-        val entityList = service.updateAll(EntityConverter.convert(valueObjectList))
-        return ServerResponse.success(ValueObjectConverter.convert(entityList, valueObjectClass))
-    }
+    fun updateAll(@RequestBody valueObjectList: Collection<VO>): ResponseEntity<Collection<VO>> =
+            service.updateAll(EntityConverter.convert(valueObjectList)).let {
+                ServerResponse.success(ValueObjectConverter.convert(it, valueObjectClass))
+            }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: UUID?): ResponseEntity<HttpStatus> {
-        service.deleteById(id)
-        return ServerResponse.success()
-    }
+    fun delete(@PathVariable id: UUID?): ResponseEntity<HttpStatus> =
+            service.deleteById(id).let {
+                ServerResponse.success()
+            }
 
     @GetMapping("/{id}")
-    fun find(@PathVariable id: UUID): ResponseEntity<VO> {
-        val entity = service.find(id)
-        return ServerResponse.success(ValueObjectConverter.convert(entity, valueObjectClass))
-    }
+    fun find(@PathVariable id: UUID): ResponseEntity<VO>? =
+            service.find(id)?.let {
+                ServerResponse.success(ValueObjectConverter.convert(it, valueObjectClass))
+            }
+
+    @GetMapping("/all")
+    fun findAll(): ResponseEntity<Collection<VO>> =
+            service.findAll().let {
+                ServerResponse.success(ValueObjectConverter.convert(it, valueObjectClass))
+            }
 
     @GetMapping("/find-by-params")
     fun findByParams(@RequestParam("page") page: Int,
@@ -80,6 +80,7 @@ abstract class AbstractController<E : EntityBase, VO : ValueObject<E>, S : DataS
                      @RequestParam("sort") sort: Array<String>?,
                      @RequestParam("direction") direction: Sort.Direction = Sort.Direction.ASC,
                      @RequestParam("search") search: Array<String>?): ResponseEntity<Collection<VO>> {
+
         val pageRequest = sort?.let { PageRequest.of(page, size, Sort.by(direction, *sort)) }
                 ?: PageRequest.of(page, size)
 
@@ -101,13 +102,6 @@ abstract class AbstractController<E : EntityBase, VO : ValueObject<E>, S : DataS
             searchMap[parameter[0]] = parameter[1]
         }
         return searchMap
-    }
-
-    @GetMapping("/all")
-    fun findAll(): ResponseEntity<Collection<VO>> {
-        val entityList = service.findAll()
-        val valueObjectList = ValueObjectConverter.convert(entityList, valueObjectClass)
-        return ServerResponse.success(valueObjectList)
     }
 
     protected abstract val valueObjectClass: KClass<VO>
