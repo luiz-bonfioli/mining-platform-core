@@ -14,7 +14,7 @@ object EntityConverter {
     /**
      * The logger instance for this class
      */
-    internal val logger = Logger.getLogger(EntityConverter::class.java.name)
+    internal val logger = Logger.getLogger(EntityConverter::class.qualifiedName)
 
     /**
      *

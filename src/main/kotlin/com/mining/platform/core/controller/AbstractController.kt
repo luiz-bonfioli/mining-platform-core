@@ -81,7 +81,7 @@ abstract class AbstractController<E : EntityBase, VO : ValueObject<E>, S : DataS
                      @RequestParam("direction") direction: Sort.Direction = Sort.Direction.ASC,
                      @RequestParam("search") search: Array<String>?): ResponseEntity<Collection<VO>> {
         val pageRequest = sort?.let { PageRequest.of(page, size, Sort.by(direction, *sort)) }
-                ?: run { PageRequest.of(page, size) }
+                ?: PageRequest.of(page, size)
 
         val pageSlice = service.findByParams(pageRequest, createSearchMap(search))
         val entityList = pageSlice.content

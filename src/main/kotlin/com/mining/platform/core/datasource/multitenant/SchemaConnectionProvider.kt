@@ -76,6 +76,6 @@ class SchemaConnectionProvider : MultiTenantConnectionProvider, ServiceRegistryA
         /**
          * The logger instance for this class
          */
-        private val logger = Logger.getLogger(SchemaConnectionProvider::class.java.name)
+        private val logger = Logger.getLogger(SchemaConnectionProvider::class.qualifiedName)
     }
 }
