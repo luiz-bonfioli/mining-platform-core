@@ -22,8 +22,6 @@ import java.util.logging.Logger
 @Component
 class MessageConsumer() : org.springframework.amqp.core.MessageListener {
 
-    private val logger = Logger.getLogger(MessageConsumer::class.qualifiedName)
-
     @Autowired
     private lateinit var beanFactory: AutowireCapableBeanFactory
 
@@ -86,6 +84,6 @@ class MessageConsumer() : org.springframework.amqp.core.MessageListener {
         /**
          * The logger instance for this class
          */
-
+        private val logger = Logger.getLogger(MessageConsumer::class.qualifiedName)
     }
 }
