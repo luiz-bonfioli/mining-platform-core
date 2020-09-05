@@ -30,7 +30,6 @@ class CommunicationService {
 
     private lateinit var container: DirectMessageListenerContainer
 
-
     @Autowired
     private lateinit var rabbitTemplate: RabbitTemplate
 
