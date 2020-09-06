@@ -13,6 +13,13 @@ object Protocol {
     const val APPLICATION_NAME = "application_name"
     const val APPLICATION_INSTANCE = "application_instance"
 
+    object Topic {
+        const val REQUEST = ".request"
+        const val RESPONSE = ".response"
+        const val MQTT_DEFAULT = "amq.topic"
+        const val REGISTRATION = "company_token.registration";
+    }
+
     object Service {
         const val DEVICE: Byte = 0x00
         const val EQUIPMENT: Byte = 0x01
@@ -21,14 +28,8 @@ object Protocol {
     object Event {
         const val IMPORT: Byte = 0x00
         const val EXPORT: Byte = 0x01
-        const val MESSAGE: Byte = 0x02
-    }
-
-    object Topic {
-        const val REQUEST = ".request"
-        const val RESPONSE = ".response"
-        const val MQTT_DEFAULT = "amq.topic"
-        const val REGISTRATION = "company_token.registration";
+        const val REGISTER_DEVICE: Byte = 0x03
+        const val ASSIGN_EQUIPMENT: Byte = 0x04
     }
 
     object Fanout {
