@@ -2,7 +2,6 @@ package com.mining.platform.core.communication.topic
 
 import com.mining.platform.core.communication.protocol.Protocol
 import java.util.*
-import java.util.regex.Pattern
 
 /**
  *
@@ -22,32 +21,18 @@ object TopicUtils {
     /**
      *
      */
-    private const val COMPANY_TOKEN_INDEX = 1
+    private const val COMPANY_TOKEN_INDEX = 0
 
     /**
      *
      */
-    private const val DEVICE_TOKEN_INDEX = 2
+    private const val DEVICE_TOKEN_INDEX = 1
 
     /**
      *
      */
-    private const val USER_TOKEN_INDEX = 3
-    /**
-     *
-     * @param topicTemplate
-     * @param companyToken
-     * @param deviceToken
-     * @param userToken
-     * @return
-     */
-    /**
-     *
-     * @param topicTemplate
-     * @param companyToken
-     * @param deviceToken
-     * @return
-     */
+    private const val USER_TOKEN_INDEX = 2
+
     /**
      *
      * @param topicTemplate
@@ -144,42 +129,30 @@ object TopicUtils {
      * @param queueName
      * @return
      */
-    fun getCompanyToken(queueName: String?): String {
-        if (queueName != null) {
-            val tokens = queueName.split(Pattern.quote(QUEUE_SEPARATOR)).toTypedArray()
-            if (tokens != null && tokens.size > COMPANY_TOKEN_INDEX) {
-                return tokens[COMPANY_TOKEN_INDEX]
-            }
-        }
-        return EMPTY
-    }
+    fun getCompanyToken(queueName: String): String? =
+            queueName.split(QUEUE_SEPARATOR).getOrNull(COMPANY_TOKEN_INDEX)
 
     /**
      *
      * @param queueName
      * @return
      */
-    fun getDeviceToken(queueName: String?): String {
-        return queueName?.split(Pattern.quote(QUEUE_SEPARATOR))?.toTypedArray()?.get(DEVICE_TOKEN_INDEX)
-                ?: EMPTY
-    }
+    fun getDeviceToken(queueName: String): String? =
+            queueName.split(QUEUE_SEPARATOR).getOrNull(DEVICE_TOKEN_INDEX)
 
     /**
      *
      * @param queueName
      * @return
      */
-    fun getUserToken(queueName: String?): String {
-        return queueName?.split(Pattern.quote(QUEUE_SEPARATOR))?.toTypedArray()?.get(USER_TOKEN_INDEX)
-                ?: EMPTY
-    }
+    fun getUserToken(queueName: String): String? =
+            queueName.split(QUEUE_SEPARATOR).getOrNull(USER_TOKEN_INDEX)
 
     /**
      *
      * @param topic
      * @return
      */
-    fun convertToResponse(topic: String): String {
-        return topic.replace(Protocol.Topic.REQUEST, "") + Protocol.Topic.RESPONSE
-    }
+    fun convertToResponse(topic: String): String =
+            topic.replace(Protocol.Topic.REQUEST, "") + Protocol.Topic.RESPONSE
 }

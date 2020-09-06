@@ -48,14 +48,6 @@ class CommunicationService {
         return RabbitAdmin(connectionFactory)
     }
 
-    /**
-     * Create the message Collectionener container. Register the queues to the message
-     * Collectionener
-     *
-     * @param connectionFactory
-     * @param CollectionenerAdapter
-     * @return
-     */
     @Bean
     fun container(connectionFactory: ConnectionFactory, consumer: MessageConsumer): DirectMessageListenerContainer {
         container = DirectMessageListenerContainer()
@@ -71,9 +63,6 @@ class CommunicationService {
         return MessageConsumer()
     }
 
-    /**
-     * Initialize the communication service
-     */
     fun initialize() {
         createMqttInboundTopics(topicService.findMqttInboundTopics())
         createMqttOutboundTopics(topicService.findMqttOutboundTopics())
@@ -81,10 +70,6 @@ class CommunicationService {
         createServiceOutboundTopics(topicService.findServiceOutboundTopics())
     }
 
-    /**
-     *
-     * @param inboundTopics
-     */
     fun createMqttInboundTopics(inboundTopics: Collection<TopicEntity>) {
         try {
             for (topic in inboundTopics) {
@@ -95,10 +80,6 @@ class CommunicationService {
         }
     }
 
-    /**
-     *
-     * @param outboundTopics
-     */
     fun createMqttOutboundTopics(outboundTopics: Collection<TopicEntity>) {
         try {
             for (topic in outboundTopics) {
@@ -109,10 +90,6 @@ class CommunicationService {
         }
     }
 
-    /**
-     *
-     * @param serviceInboundTopics
-     */
     fun createServiceInboundTopics(serviceInboundTopics: Collection<TopicEntity>) {
         try {
             for (topic in serviceInboundTopics) {
@@ -123,10 +100,6 @@ class CommunicationService {
         }
     }
 
-    /**
-     *
-     * @param serviceOutboundTopics
-     */
     fun createServiceOutboundTopics(serviceOutboundTopics: Collection<TopicEntity>) {
         try {
             for (topic in serviceOutboundTopics) {
@@ -137,9 +110,6 @@ class CommunicationService {
         }
     }
 
-    /**
-     * Create queue dynamically and bind to its exchange
-     */
     private fun declareDurableQueue(queueName: String?, exchangeName: String?, exchangeType: ExchangeType?) {
         try {
             val queue = QueueBuilder.durable(queueName).build()
@@ -161,10 +131,6 @@ class CommunicationService {
         }
     }
 
-    /**
-     *
-     * @param deviceInboundTopics
-     */
     fun subscribeToMqttTopics(deviceInboundTopics: Collection<TopicEntity>) {
         try {
             container.addQueueNames(*toStringArray(deviceInboundTopics))
@@ -181,13 +147,6 @@ class CommunicationService {
         }
     }
 
-    /**
-     * Publish a message into specific route key
-     *
-     * @param exchange
-     * @param routingKey
-     * @param payload
-     */
     fun publish(exchange: String, routingKey: String, payload: ByteArray) {
         try {
             rabbitTemplate.convertAndSend(exchange, routingKey, payload)
@@ -196,13 +155,11 @@ class CommunicationService {
         }
     }
 
-    /**
-     * Publish a message into specific topic
-     *
-     * @param topic
-     * @param payload
-     */
     fun publish(topic: String, payload: ByteArray) {
         publish(topic, topic, payload)
+    }
+
+    fun publish(topic: String, service: Byte, event: Byte, payload: ByteArray) {
+        publish(topic, topic, byteArrayOf(service, event).plus(payload))
     }
 }

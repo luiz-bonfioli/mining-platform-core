@@ -42,10 +42,9 @@ class MessageConsumer() : org.springframework.amqp.core.MessageListener {
      * @param message
      */
     private fun setContextHolder(message: Message) {
-
         val consumerQueue = message.messageProperties.consumerQueue
-        val companyToken: String = TopicUtils.getCompanyToken(consumerQueue)
-        val userToken: String = TopicUtils.getUserToken(consumerQueue)
+        val companyToken = TopicUtils.getCompanyToken(consumerQueue)
+        val userToken = TopicUtils.getUserToken(consumerQueue)
 
         if (UUIDConverter.isFormatValid(companyToken) && UUIDConverter.isFormatValid(userToken)) {
             ContextHolder.context = Context(UUIDConverter.toUUID(companyToken), UUIDConverter.toUUID(userToken))
@@ -72,7 +71,7 @@ class MessageConsumer() : org.springframework.amqp.core.MessageListener {
         val service = ServiceMapping.getServiceById(serviceId)
         if (service != null) {
             val source = message.messageProperties.consumerQueue
-            val listener: MessageListener = beanFactory.getBean(service)
+            val listener: MessageListener = beanFactory.getBean(service.java)
             listener.onMessageArrived(eventId, content, source)
             logger.log(Level.INFO, "Message arrived: [ $serviceId, $eventId ] ${service.qualifiedName}")
         } else {

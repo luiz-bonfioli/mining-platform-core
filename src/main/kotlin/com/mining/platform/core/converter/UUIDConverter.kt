@@ -26,7 +26,7 @@ object UUIDConverter {
      * @param uuid
      * @return
      */
-    fun toUUID(uuid: String): UUID {
+    fun toUUID(uuid: String?): UUID {
         return UUID.fromString(uuid)
     }
 
@@ -74,7 +74,7 @@ object UUIDConverter {
      * @param uuid
      * @return
      */
-    fun isFormatValid(uuid: String): Boolean {
+    fun isFormatValid(uuid: String?): Boolean {
         val pattern = Pattern.compile("(\\p{XDigit}{8})-(\\p{XDigit}{4})-(\\p{XDigit}{4})-(\\p{XDigit}{4})-(\\p{XDigit}+)")
         return pattern.matcher(uuid).matches()
     }
