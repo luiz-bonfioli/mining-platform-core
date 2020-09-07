@@ -16,7 +16,7 @@ object Protocol {
     object Topic {
         const val REQUEST = ".request"
         const val RESPONSE = ".response"
-        const val DIGNOSTIC = "system.diagnostic.event"
+        const val DIAGNOSTIC = "system.diagnostic.event"
         const val MQTT_DEFAULT = "amq.topic"
         const val COMPANY = "application_name.company.event"
         const val BASIC_DATA_SYNC = "company_token.device_token.basic.data.sync"
