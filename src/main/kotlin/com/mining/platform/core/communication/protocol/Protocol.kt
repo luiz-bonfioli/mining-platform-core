@@ -16,9 +16,11 @@ object Protocol {
     object Topic {
         const val REQUEST = ".request"
         const val RESPONSE = ".response"
+        const val DIGNOSTIC = "system.diagnostic.event"
         const val MQTT_DEFAULT = "amq.topic"
         const val COMPANY = "application_name.company.event"
-        const val REGISTRATION = "company_token.registration";
+        const val BASIC_DATA_SYNC = "company_token.device_token.basic.data.sync"
+
     }
 
     object Service {
@@ -31,8 +33,8 @@ object Protocol {
         const val IMPORT: Byte = 0x00
         const val EXPORT: Byte = 0x01
         const val COMPANY_CREATED: Byte = 0x03
-        const val REGISTER_DEVICE: Byte = 0x05
-        const val ASSIGN_EQUIPMENT: Byte = 0x06
+        const val EQUIPMENT_LIST: Byte = 0x04
+        const val ASSIGN_EQUIPMENT: Byte = 0x05
     }
 
     object Fanout {

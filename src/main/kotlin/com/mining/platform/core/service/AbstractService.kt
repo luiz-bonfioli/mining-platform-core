@@ -7,7 +7,6 @@ import com.mining.platform.core.datasource.EntityStatus
 import com.mining.platform.core.exception.MethodSearchNotImplementedException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -158,7 +157,7 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
      * @return
      */
     open fun findByParams(pageable: Pageable, search: Map<String, String>): Page<E> =
-        throw MethodSearchNotImplementedException("This method should be implemented with custom query in the repository interface.")
+            throw MethodSearchNotImplementedException("This method should be implemented with custom query in the repository interface.")
 
     /**
      * Delete an entity by its id. This is a soft delete.
