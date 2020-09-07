@@ -27,6 +27,7 @@ object Protocol {
         const val COMPANY: Byte = 0x00
         const val DEVICE: Byte = 0x01
         const val EQUIPMENT: Byte = 0x02
+        const val OPERATOR: Byte = 0x03
     }
 
     object Event {
@@ -34,7 +35,7 @@ object Protocol {
         const val EXPORT: Byte = 0x01
         const val COMPANY_CREATED: Byte = 0x03
         const val EQUIPMENT_LIST: Byte = 0x04
-        const val ASSIGN_EQUIPMENT: Byte = 0x05
+        const val OPERATOR_LIST: Byte = 0x05
     }
 
     object Fanout {
