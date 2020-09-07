@@ -60,7 +60,7 @@ class MessageConsumer() : org.springframework.amqp.core.MessageListener {
         val payloadBuffer = ByteBuffer.wrap(message.body)
         val serviceId = payloadBuffer.get()
         val eventId = payloadBuffer.get()
-        var content: ByteArray? = null
+        var content = ByteArray(0)
         val remaining = payloadBuffer.remaining()
 
         if (remaining != 0) {

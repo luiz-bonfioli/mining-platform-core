@@ -284,9 +284,6 @@ abstract class AbstractService<E : EntityBase, R : AbstractRepository<E, UUID>> 
     open fun afterUpdate(entities: Collection<E>) {}
 
     companion object {
-        /**
-         * The logger instance for this class
-         */
-        protected val logger = Logger.getLogger(AbstractService::class.qualifiedName)
+        val logger: Logger = Logger.getLogger(AbstractService::class.qualifiedName)
     }
 }
