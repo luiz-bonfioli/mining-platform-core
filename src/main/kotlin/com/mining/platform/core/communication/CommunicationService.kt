@@ -155,11 +155,7 @@ class CommunicationService {
         }
     }
 
-    fun publish(topic: String, payload: ByteArray) {
-        publish(topic, topic, payload)
-    }
-
-    fun publish(topic: String, service: Byte, event: Byte, payload: ByteArray) {
-        publish(topic, topic, byteArrayOf(service, event).plus(payload))
+    fun publish(exchange: String, routingKey: String, service: Byte, event: Byte, payload: ByteArray) {
+        publish(exchange, routingKey, byteArrayOf(service, event).plus(payload))
     }
 }
