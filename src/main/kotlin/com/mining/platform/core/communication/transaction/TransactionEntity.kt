@@ -39,6 +39,9 @@ data class TransactionEntity(
         var serviceId: Byte,
 
         @Column(name = "event_id", nullable = false)
-        var eventId: Byte
+        var eventId: Byte,
+
+        @Column(name = "topic", nullable = false)
+        var topic: String
 
 ) : AuditableEntity()

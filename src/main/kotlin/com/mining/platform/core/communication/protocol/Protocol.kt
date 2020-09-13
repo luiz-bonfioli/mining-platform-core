@@ -24,18 +24,31 @@ object Protocol {
     }
 
     object Service {
-        const val COMPANY: Byte = 0x00
-        const val DEVICE: Byte = 0x01
-        const val EQUIPMENT: Byte = 0x02
-        const val OPERATOR: Byte = 0x03
+        const val TRANSACTION: Byte = 0x01
+        const val COMPANY: Byte = 0x02
+        const val DEVICE: Byte = 0x03
+        const val EQUIPMENT: Byte = 0x04
+        const val OPERATOR: Byte = 0x05
     }
 
     object Event {
-        const val IMPORT: Byte = 0x00
-        const val EXPORT: Byte = 0x01
-        const val COMPANY_CREATED: Byte = 0x03
-        const val EQUIPMENT_LIST: Byte = 0x04
-        const val OPERATOR_LIST: Byte = 0x05
+        const val CREATE_TRANSACTION: Byte = 0x00
+        const val ABORT_TRANSACTION: Byte = 0x01
+        const val EMPTY_TRANSACTION: Byte = 0x02
+        const val TRANSACTION_STATUS: Byte = 0x03
+        const val FRAGMENTS_AVAILABLE: Byte = 0x04
+        const val FRAGMENT_REQUEST: Byte = 0x05
+        const val FRAGMENT_EXPORT: Byte = 0x06
+
+        const val IMPORT: Byte = 0x07
+        const val EXPORT: Byte = 0x08
+        const val ABORT: Byte = 0x09
+        const val NACK: Byte = 0x10
+        const val ACK: Byte = 0x11
+
+        const val COMPANY_CREATED: Byte = 0x12
+        const val EQUIPMENT_LIST: Byte = 0x13
+        const val OPERATOR_LIST: Byte = 0x14
     }
 
     object Fanout {
