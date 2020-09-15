@@ -1,16 +1,16 @@
-package com.mining.platform.core.communication.transaction.import
+package com.mining.platform.core.transaction.import
 
 import com.mining.platform.core.communication.CommunicationService
 import com.mining.platform.core.communication.protocol.Protocol
 import com.mining.platform.core.communication.protocol.Protocol.Topic
-import com.mining.platform.core.communication.transaction.TransactionEntity
-import com.mining.platform.core.communication.transaction.TransactionService
-import com.mining.platform.core.communication.transaction.inbound.InboundEntity
-import com.mining.platform.core.communication.transaction.inbound.InboundService
-import com.mining.platform.core.communication.transaction.inbound.InboundStatus
 import com.mining.platform.core.converter.UUIDConverter.toBytes
 import com.mining.platform.core.converter.UUIDConverter.toUUID
 import com.mining.platform.core.service.ServiceMapping.getServiceById
+import com.mining.platform.core.transaction.TransactionEntity
+import com.mining.platform.core.transaction.TransactionService
+import com.mining.platform.core.transaction.inbound.InboundEntity
+import com.mining.platform.core.transaction.inbound.InboundService
+import com.mining.platform.core.transaction.inbound.InboundStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory
 import org.springframework.stereotype.Service
@@ -58,11 +58,11 @@ class ImportService {
         return success
     }
 
-    private fun create(transactionId: UUID, topic: String, serviceId: Byte, eventId: Byte,
-                       numberOfPackages: Int): TransactionEntity {
-        return transactionService.create(transactionId, topic, serviceId, eventId,
-                numberOfPackages)
-    }
+//    private fun create(transactionId: UUID, topic: String, serviceId: Byte, eventId: Byte,
+  //                     numberOfPackages: Int): TransactionEntity {
+    //    return transactionService.create(transactionId, topic, serviceId, eventId,
+      //          numberOfPackages)
+    //}
 
     private fun saveFragment(payload: ByteArray): Boolean {
         var success = true
@@ -88,16 +88,16 @@ class ImportService {
     }
 
     private fun processTransaction(transaction: TransactionEntity): Boolean {
-        val service = getServiceById(transaction.serviceId)
-        var success = false
-        if (service != null) {
-            val processor = beanFactory.getBean(service.java)
+        //val service = getServiceById(transaction.serviceId)
+       // var success = false
+      //  if (service != null) {
+      //      val processor = beanFactory.getBean(service.java)
             //TODO      success = processor.onMessageArrived(transaction.id, transaction.eventId)
-            if (!success) {
-                logger.log(Level.SEVERE, "Error to process transaction {0}", transaction.id)
-            }
-        }
-        return success
+       //     if (!success) {
+       //         logger.log(Level.SEVERE, "Error to process transaction {0}", transaction.id)
+        //    }
+     //   }
+        return false //success
     }
 
     private fun saveInbound(transaction: TransactionEntity, packageNumber: Int,
@@ -127,6 +127,7 @@ class ImportService {
         var success = true
         try {
             val buffer = ByteBuffer.wrap(payload)
+
             val transactionIdArray = ByteArray(16)
             buffer[transactionIdArray]
             val transactionId = toUUID(transactionIdArray)
@@ -135,10 +136,9 @@ class ImportService {
             val numberOfPackages = buffer.int
             val topicArray = ByteArray(buffer.remaining())
             buffer[topicArray]
+
             val topic = String(topicArray)
-            val transaction = create(transactionId, topic, transactionServiceId,
-                    transactionEventId,
-                    numberOfPackages)
+            val transaction = null;// create(transactionId, topic, transactionServiceId, transactionEventId, numberOfPackages)
             if (transaction == null) {
                 success = false
                 logger.log(Level.SEVERE, "Error to create transaction. Transaction is null")

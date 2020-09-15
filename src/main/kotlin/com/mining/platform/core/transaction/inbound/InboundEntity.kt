@@ -1,23 +1,23 @@
-package com.mining.platform.core.communication.transaction.outbound
+package com.mining.platform.core.transaction.inbound
 
 import com.mining.platform.core.audit.AuditListener
 import com.mining.platform.core.audit.AuditableEntity
-import com.mining.platform.core.communication.transaction.TransactionEntity
+import com.mining.platform.core.transaction.TransactionEntity
 import org.hibernate.annotations.GenericGenerator
 import org.hibernate.annotations.Where
 import java.util.*
 import javax.persistence.*
 
 /**
- * The Outbound entity
+ * The Inbound entity
  *
  * @author luiz.bonfioli
  */
 @Entity
-@Table(name = "outbound")
+@Table(name = "inbound")
 @Where(clause = "entity_status <> 'DELETED'")
 @EntityListeners(AuditListener::class)
-data class OutboundEntity(
+data class InboundEntity(
 
         @Id
         @GeneratedValue(generator = "UUID")
@@ -30,6 +30,10 @@ data class OutboundEntity(
 
         @Column(name = "content", nullable = false)
         var content: ByteArray,
+
+        @Enumerated(EnumType.STRING)
+        @Column(name = "inbound_status")
+        var inboundStatus: InboundStatus,
 
         @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn(name = "transaction_id", foreignKey = ForeignKey(name = "transaction_fk"))

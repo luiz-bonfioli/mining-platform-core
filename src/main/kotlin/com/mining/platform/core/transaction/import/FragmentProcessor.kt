@@ -1,4 +1,4 @@
-package com.mining.platform.core.communication.transaction.import
+package com.mining.platform.core.transaction.import
 
 import java.util.*
 

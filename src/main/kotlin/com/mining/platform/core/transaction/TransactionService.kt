@@ -1,18 +1,17 @@
-package com.mining.platform.core.communication.transaction
+package com.mining.platform.core.transaction
 
 import com.mining.platform.core.communication.CommunicationService
 import com.mining.platform.core.communication.MessageListener
 import com.mining.platform.core.communication.protocol.Protocol
 import com.mining.platform.core.communication.protocol.Protocol.Topic
-import com.mining.platform.core.communication.transaction.export.ExportService
-import com.mining.platform.core.communication.transaction.import.ImportService
-import com.mining.platform.core.communication.transaction.inbound.InboundEntity
-import com.mining.platform.core.communication.transaction.inbound.InboundService
-import com.mining.platform.core.communication.transaction.outbound.OutboundService
+import com.mining.platform.core.transaction.export.ExportService
+import com.mining.platform.core.transaction.import.ImportService
+import com.mining.platform.core.transaction.inbound.InboundEntity
+import com.mining.platform.core.transaction.inbound.InboundService
+import com.mining.platform.core.transaction.outbound.OutboundService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
-import java.util.UUID.randomUUID
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -49,59 +48,35 @@ class TransactionService : MessageListener {
             Protocol.Event.EXPORT -> success = exportService.process(payload)
             Protocol.Event.TRANSACTION_STATUS -> success = processStatusRequest(payload, source)
             else -> logger.log(Level.SEVERE,
-                    "Event not found, should be import(0x45) or export(0x46) instead of {0}.", eventId)
+                    "Event not found, should be import or export instead of {0}.", eventId)
         }
         if (!success) {
             sendError(eventId, "Cannot proccess the event: $eventId", source)
         }
     }
 
-    private fun processStatusRequest(payload: ByteArray, source: String): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    fun create(topic: String): TransactionEntity {
-        // TODO rever esse método 0x00
-        val transaction = repository.save(TransactionEntity(
-                id = randomUUID(),
-                topic = topic,
-                serviceId = 0x00,
-                eventId = 0x00,
-                numberOfPackages = 0,
-                transactionType = TransactionType.OUTBOUND,
-                transactionStatus = TransactionStatus.OPEN
-        ))
-        sendCreatedTransaction(transaction)
-
-        return transaction
-    }
-
-    fun create(transactionId: UUID, topic: String, serviceId: Byte, eventId: Byte, numberOfPackages: Int): TransactionEntity =
+    fun create(topic: String, transactionType: TransactionType): TransactionEntity =
             repository.save(TransactionEntity(
-                    id = transactionId,
+                    id = UUID.randomUUID(),
                     topic = topic,
-                    serviceId = serviceId,
-                    eventId = eventId,
-                    numberOfPackages = numberOfPackages,
-                    transactionType = TransactionType.INBOUND,
-                    transactionStatus = TransactionStatus.OPEN
-
-            ))
+                    transactionType = transactionType,
+                    transactionStatus = TransactionStatus.OPEN))
 
     fun addFragment(transaction: TransactionEntity, content: ByteArray) {
-        transaction.numberOfPackages = transaction.numberOfPackages + 1
+        transaction.numberOfPackages += 1
         outboundService.addFragment(transaction, content)
     }
 
     fun execute(transaction: TransactionEntity) =
-            if (isTransactionEmpty(transaction)) {
-                sendEmptyTransaction(transaction.topic)
-                transaction.id?.let { closeOutboundTransaction(it) }
-
-            } else {
-                transaction.transactionStatus = TransactionStatus.AVAILABLE
-                repository.save(transaction)
-                sendFragmentsAvailable(transaction)
+            transaction.id?.let { transactionId ->
+                if (isTransactionEmpty(transaction)) {
+                    sendEmptyTransaction(transaction.topic)
+                    closeOutboundTransaction(transactionId)
+                } else {
+                    transaction.transactionStatus = TransactionStatus.AVAILABLE
+                    repository.save(transaction)
+                    sendFragmentsAvailable(transaction)
+                }
             }
 
     fun isTransactionEmpty(transaction: TransactionEntity): Boolean =
@@ -109,6 +84,10 @@ class TransactionService : MessageListener {
                 TransactionType.OUTBOUND -> !outboundService.existsByTransactionId(transaction.id)
                 TransactionType.INBOUND -> !inboundService.existsByTransactionId(transaction.id)
             }
+
+    private fun processStatusRequest(payload: ByteArray, source: String): Boolean {
+        TODO("Not yet implemented")
+    }
 
     private fun sendCreatedTransaction(transaction: TransactionEntity) =
             transaction.id?.let { transactionId ->

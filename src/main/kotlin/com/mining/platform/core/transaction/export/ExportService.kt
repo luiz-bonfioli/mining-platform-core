@@ -1,13 +1,12 @@
-package com.mining.platform.core.communication.transaction.export
+package com.mining.platform.core.transaction.export
 
 import com.mining.platform.core.communication.CommunicationService
 import com.mining.platform.core.communication.protocol.Protocol
 import com.mining.platform.core.communication.protocol.Protocol.Topic
-import com.mining.platform.core.communication.transaction.TransactionHeader
-import com.mining.platform.core.communication.transaction.TransactionPackage
-import com.mining.platform.core.communication.transaction.TransactionService
-import com.mining.platform.core.communication.transaction.outbound.OutboundEntity
-import com.mining.platform.core.communication.transaction.outbound.OutboundService
+import com.mining.platform.core.transaction.TransactionHeader
+import com.mining.platform.core.transaction.TransactionService
+import com.mining.platform.core.transaction.outbound.OutboundEntity
+import com.mining.platform.core.transaction.outbound.OutboundService
 import com.mining.platform.core.converter.UUIDConverter.toUUID
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

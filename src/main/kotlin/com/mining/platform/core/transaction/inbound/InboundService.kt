@@ -1,4 +1,4 @@
-package com.mining.platform.core.communication.transaction.inbound
+package com.mining.platform.core.transaction.inbound
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

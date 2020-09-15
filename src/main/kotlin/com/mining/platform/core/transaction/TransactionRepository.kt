@@ -1,4 +1,4 @@
-package com.mining.platform.core.communication.transaction
+package com.mining.platform.core.transaction
 
 import com.mining.platform.core.datasource.AbstractRepository
 import org.springframework.stereotype.Repository

@@ -1,4 +1,4 @@
-package com.mining.platform.core.communication.transaction
+package com.mining.platform.core.transaction
 
 import com.mining.platform.core.converter.UUIDConverter.toBytes
 import java.nio.ByteBuffer

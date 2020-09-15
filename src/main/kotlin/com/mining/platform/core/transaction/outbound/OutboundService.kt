@@ -1,6 +1,6 @@
-package com.mining.platform.core.communication.transaction.outbound
+package com.mining.platform.core.transaction.outbound
 
-import com.mining.platform.core.communication.transaction.TransactionEntity
+import com.mining.platform.core.transaction.TransactionEntity
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
@@ -33,8 +33,5 @@ class OutboundService {
 
     fun deleteById(id: UUID) = repository.deleteById(id)
 
-    //@Transactional
     fun deleteAllByTransactionId(transactionId: UUID) = repository.deleteAllByTransactionId(transactionId)
-
-
 }
