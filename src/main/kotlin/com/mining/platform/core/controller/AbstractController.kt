@@ -95,6 +95,28 @@ abstract class AbstractController<E : EntityBase, VO : ValueObject<E>, S : DataS
         return ServerResponse.success(valueObjectList, headers)
     }
 
+    @GetMapping("/find-by-parent-and-params")
+    fun findByParentIdAndParams(@RequestParam("parentId") parentId: UUID,
+                                @RequestParam("page") page: Int,
+                                @RequestParam("size") size: Int,
+                                @RequestParam("sort") sort: Array<String>?,
+                                @RequestParam("direction") direction: Sort.Direction = Sort.Direction.ASC,
+                                @RequestParam("search") search: Array<String>?): ResponseEntity<Collection<VO>> {
+
+        val pageRequest = sort?.let { PageRequest.of(page, size, Sort.by(direction, *sort)) }
+                ?: PageRequest.of(page, size)
+
+        val pageSlice = service.findByParentIdAndParams(pageRequest, parentId, createSearchMap(search))
+        val entityList = pageSlice.content
+        val valueObjectList = ValueObjectConverter.convert(entityList, valueObjectClass)
+
+        val headers: MultiValueMap<String, String> = LinkedMultiValueMap()
+        headers.add("X-Total-Elements", pageSlice.totalElements.toString())
+        headers.add("X-Total-Pages", pageSlice.totalPages.toString())
+
+        return ServerResponse.success(valueObjectList, headers)
+    }
+
     private fun createSearchMap(search: Array<String>?): Map<String, String> {
         val searchMap = HashMap<String, String>()
         search?.forEach {
